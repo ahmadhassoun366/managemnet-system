@@ -1,0 +1,93 @@
+{% extends 'base.html' %} {% load static %} {% block content %}
+<div class="h-full p-8 flex items-center justify-center">
+  <div
+    class="flex gap-1 w-5/6 h-5/6 drop-shadow-lg bg-gray-50 dark:bg-gray-950"
+  >
+    <div class="hidden lg:inline-flex w-1/2 bg-gray-50 dark:bg-gray-950">
+      <img
+        src="{% static 'images/imgSignUp.png' %}"
+        alt="Sign Up Image"
+        class="w-full h-full object-cover"
+      />
+    </div>
+    <div
+      class="lg:w-1/2 lg:px-10 p-5 dark:text-white text-abrandc-dark-blackish"
+    >
+      <h1 class="text-center text-3xl font-semibold mb-5 lg:mt-8">Sign up</h1>
+      <form class="text-lg space-y-4" method="post">
+        {% csrf_token %}
+        <div class="space-y-2">
+          <label
+            for="id_username"
+            class="dark:text-white text-abrandc-dark-blackish"
+            >Username</label
+          >
+          <input
+            id="id_username"
+            name="username"
+            type="text"
+            autocomplete="username"
+            required
+            class="w-full h-10 mb-2 px-5 rounded-md drop-shadow bg-abrandc-light-grey dark:bg-gray-700"
+            placeholder="Enter your username"
+          />
+        </div>
+        <div class="space-y-2">
+          <label
+            for="id_password1"
+            class="dark:text-white text-abrandc-dark-blackish"
+            >Password</label
+          >
+          <input
+            id="id_password1"
+            name="password1"
+            type="password"
+            autocomplete="new-password"
+            required
+            class="w-full h-10 mb-2 px-5 rounded-md drop-shadow bg-abrandc-light-grey dark:bg-gray-700"
+            placeholder="Enter your password"
+          />
+        </div>
+        <div class="space-y-2">
+          <label
+            for="id_password2"
+            class="dark:text-white text-abrandc-dark-blackish"
+            >Confirm password</label
+          >
+          <input
+            id="id_password2"
+            name="password2"
+            type="password"
+            autocomplete="new-password"
+            required
+            class="w-full h-10 mb-2 px-5 rounded-md drop-shadow bg-abrandc-light-grey dark:bg-gray-700"
+            placeholder="Confirm your password"
+          />
+        </div>
+        <a
+          href="{% url 'login' %}"
+          class="text-base text-blue-500 underline underline-offset-4"
+          >Already have an account?</a
+        >
+        <div class="text-center">
+          <button
+            type="submit"
+            class="mt-4 w-2/6 font-semibold text-white bg-blue-700 py-2 rounded-md"
+          >
+            Submit
+          </button>
+        </div>
+      </form>
+      {% if form.errors %}
+      <div class="error-messages mt-4">
+        {% for field in form %} {% if field.errors %}
+        <div class="text-red-600">
+          <strong>{{ field.label }}:</strong> {{ field.errors|striptags }}
+        </div>
+        {% endif %} {% endfor %}
+      </div>
+      {% endif %}
+    </div>
+  </div>
+</div>
+{% endblock %}

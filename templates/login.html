@@ -1,0 +1,77 @@
+{% extends 'base.html' %} {% load static %} {% block content %}
+<div class="h-full flex items-center justify-center  mt-0.5 p-8">
+  <div
+    class="flex gap-1 w-5/6 h-5/6 drop-shadow-lg rounded bg-gray-50 dark:bg-abrandc-dark-grey"
+  >
+    <div class="hidden lg:inline-flex w-1/2 bg-white dark:bg-abrandc-dark-grey">
+      <img
+        src="{% static 'images/imgLogin.png' %}"
+        alt="Login Image"
+        class="w-full h-full object-cover"
+      />
+    </div>
+    <div
+      class="lg:w-1/2 lg:pl-20 lg:pr-20 pt-5 pb-5 pl-5 pr-5 flex items-center flex-col justify-center"
+    >
+      <h1
+        class="text-center text-3xl font-semibold mb-8 dark:text-white text-black"
+      >
+        Sign in
+      </h1>
+      <form class="space-y-4" method="post">
+        {% csrf_token %}
+        <div class="space-y-2">
+          <label
+            for="username"
+            class="dark:text-white text-black"
+            >Username</label
+          >
+          <input
+            id="username"
+            name="username"
+            type="text"
+            autocomplete="username"
+            required
+            class="w-full h-10 mb-2 px-5 rounded-md drop-shadow bg-abrandc-light-grey dark:bg-gray-700"
+            placeholder="Enter your username"
+          />
+        </div>
+        <div class="space-y-2">
+          <label
+            for="password"
+            class="dark:text-white text-black"
+            >Password</label
+          >
+          <input
+            id="password"
+            name="password"
+            type="password"
+            autocomplete="current-password"
+            required
+            class="w-full h-10 mb-2 px-5 rounded-md drop-shadow bg-abrandc-light-grey dark:bg-gray-700"
+            placeholder="Enter your password"
+          />
+        </div>
+        <div>
+          <a
+            href="{% url 'register' %}"
+            class="text-sm text-CustomColor1 rounded-md underline-offset-8 underline dark:text-blue-500 text-black"
+            >Don't have an account?</a
+          >
+        </div>
+        <div class="text-center">
+          <button
+            type="submit"
+            class="mt-8 w-2/6 font-semibold text-white bg-blue-700 py-2 rounded-md"
+          >
+            Submit
+          </button>
+        </div>
+      </form>
+      {% if error %}
+      <p class="mt-2 text-sm text-red-600">{{ error }}</p>
+      {% endif %}
+    </div>
+  </div>
+</div>
+{% endblock %}

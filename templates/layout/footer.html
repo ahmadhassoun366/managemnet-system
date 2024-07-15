@@ -1,0 +1,85 @@
+<body class="">
+  <div class="dark:bg-gray-950 bg-gray-50 md:py-20 py-10 overflow-hidden p-10">
+    <div class="container-2 mx-auto">
+      <div
+        class="flex md:flex-row flex-col md:justify-between md:items-center items-start gap-y-5"
+      >
+        <!-- Navigation -->
+        <div class="flex flex-col gap-y-6">
+          <a
+            class="text-2xl font-bold dark:text-white text-gray-950 dark:lg:text-3xl"
+            href="/"
+          >
+            DAC
+          </a>
+          <div
+            class="grid grid-cols-2 gap-y-4 md:flex md:flex-row items-center gap-x-8"
+          >
+            {% for item in navigation %}
+            <a
+              href="{{ item.href }}"
+              class="font-medium hover:text-blue-800 dark:text-white dark:hover:text-blue-200"
+            >
+              {{ item.label }}
+            </a>
+            {% endfor %}
+          </div>
+        </div>
+
+        <!-- Newsletter -->
+        <div class="flex flex-col gap-y-2">
+          <h2 class="text-sm dark:text-white text-gray-950 font-medium">
+            Join our newsletter
+          </h2>
+          <div class="flex items-center gap-x-2">
+            <div class="field w-[212px]">
+              <input
+                class="py-2 px-3 h-[40px] w-full dark:bg-gray-950 rounded-[8px] border dark:border-gray-800 border-gray-300 text-sm text-gray-600 transition-all duration-200 ease-in-out // hover:text-ablue-200 focus:outline-none focus:border-ablue-500 placeholder:text-gray-600 placeholder:text-sm disabled:text-ghostly_grey-100 &.invalid { border-abrandc-light-red }"
+                placeholder="Enter your email"
+              />
+            </div>
+            <button
+              class="relative px-6 py-3 rounded-full text-sm text-center disabled:text-gray-300 disabled:bg-gray-300 disabled:border-transparent disabled:cursor-not-allowed disabled:hover:border-transparent disabled:hover:cursor-not-allowed bg-blue-500 text-white hover:bg-blue-400"
+            >
+              Subscribe
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <hr class="dark:border-gray-800 border-gray-200 mt-12" />
+
+      <div
+        class="grid grid-cols-2 gap-y-4 md:flex md:items-center md:gap-x-4 px-2 mt-4 w-full"
+      >
+        {% for item in socials %}
+        <a
+          class="flex items-center gap-x-[26px] dark:bg-white bg-gray-950 rounded-[16px] py-3 px-4 h-[60px] w-[134px]"
+          href="{{ item.href }}"
+        >
+          <i class="{{ item.icon }} text-white dark:text-black"></i>
+          <h2
+            class="dark:text-black text-white text-xs font-medium leading-[18px]"
+          >
+            {{ item.label }}
+          </h2>
+        </a>
+        {% endfor %}
+      </div>
+
+      <div class="flex md:flex-row flex-col justify-between gap-y-5">
+        <h1 class="text-sm font-medium mt-[30px] dark:text-white text-gray-950">
+          @DAC. All Rights reserved
+        </h1>
+        <div
+          class="flex gap-x-12 px-8 text-sm font-medium text-gray-600 md:items-center"
+        >
+          <a href="#">Terms</a>
+          <a href="#">Privacy</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  {% block content %}{% endblock %}
+</body>

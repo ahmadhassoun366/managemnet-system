@@ -1,0 +1,88 @@
+
+  <body class="bg-white dark:bg-gray-950">
+    <nav class="px-10 dark:bg-gray-950 bg-white shadow-xl">
+      <div
+        class="container-2 mx-auto flex items-center justify-between h-[80px]"
+      >
+        <!-- brand -->
+        <a href="/" class="text-2xl font-bold dark:text-white lg:text-3xl"
+          >DAC</a
+        >
+
+        <!-- desktop menu -->
+        <div class="hidden md:flex items-center gap-x-6 h-full">
+          <a href="/" class="navbar-link lg:mx-6">Home</a>
+          <a href="/products" class="navbar-link lg:mx-6">Products</a>
+          <a href="/about" class="navbar-link lg:mx-6">About</a>
+          {% if user.is_authenticated %}
+          <form method="post" action="{% url 'logout' %}">
+            {% csrf_token %}
+            <button class="px-6 py-2 rounded-full text-sm text-center disabled:text-gray-300 disabled:bg-gray-300 disabled:border-transparent disabled:cursor-not-allowed disabled:hover:border-transparent disabled:hover:cursor-not-allowed bg-red-500 text-white hover:bg-red-400">Logout</button>
+          </form>
+          {% else %}
+          <a href="{% url 'login' %}" class="blue medium w-[117px]">Sign In</a>
+          <a
+            href="{% url 'register' %}"
+            class="relative px-6 py-3 rounded-full text-sm text-center disabled:text-gray-300 disabled:bg-gray-300 disabled:border-transparent disabled:cursor-not-allowed disabled:hover:border-transparent disabled:hover:cursor-not-allowed bg-blue-500 text-white hover:bg-blue-400"
+            >Sign Up</a
+          >
+          {% endif %}
+        </div>
+
+        <!-- Mobile burger icon -->
+        <div class="md:hidden">
+          <button
+            data-collapse-toggle="navbar-sticky"
+            type="button"
+            class="burger"
+            aria-controls="navbar-sticky"
+            aria-expanded="true"
+          >
+            <div class="h-line h-line1"></div>
+            <div class="h-line h-line2"></div>
+            <div class="h-line h-line3"></div>
+          </button>
+        </div>
+
+        <!-- Mobile navigation menu -->
+        <div
+          id="mobile-menu"
+          class="hidden fixed top-0 left-0 w-full h-full dark:bg-gray-950 bg-white z-50 p-4 mt-header space-y-6"
+        >
+          <a
+            href="/"
+            class="navbar-link flex items-center gap-x-2 justify-between w-full"
+            >Home</a
+          >
+          <a
+            href="/products"
+            class="navbar-link flex items-center gap-x-2 justify-between w-full"
+            >Products</a
+          >
+          <a
+            href="/about"
+            class="navbar-link flex items-center gap-x-2 justify-between w-full"
+            >About</a
+          >
+          {% if user.is_authenticated %}
+          <form method="post" action="{% url 'logout' %}">
+            {% csrf_token %}
+            <button class="px-6 py-2 rounded-full text-sm text-center disabled:text-gray-300 disabled:bg-gray-300 disabled:border-transparent disabled:cursor-not-allowed disabled:hover:border-transparent disabled:hover:cursor-not-allowed bg-red-500 text-white hover:bg-red-400">Logout</button>
+          </form>
+          {% else %}
+          <a href="{% url 'login' %}" class="blue medium w-full">Sign In</a>
+          <a
+            href="{% url 'register' %}"
+            class="px-6 py-2 rounded-full text-sm text-center disabled:text-gray-300 disabled:bg-gray-300 disabled:border-transparent disabled:cursor-not-allowed disabled:hover:border-transparent disabled:hover:cursor-not-allowed bg-blue-500 text-white hover:bg-blue-400"
+            >Sign Up</a
+          >
+          {% endif %}
+         
+          </div>
+        </div>
+      </div>
+    </nav>
+
+    {% block content %}{% endblock %}
+
+ 
