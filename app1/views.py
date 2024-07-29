@@ -1,13 +1,16 @@
-from django.shortcuts import render, redirect
-from django.urls import reverse
-from .models import Space
-from .forms import SpaceForm
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import login as auth_login, authenticate, logout as auth_logout
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
+from .models import Space, Reservation
+from .forms import ReservationForm, SpaceFilterForm
 import logging
+from django.http import JsonResponse
+from django.utils import timezone
+import datetime
 
+import datetime
 logger = logging.getLogger(__name__)
 
 navigation = [
@@ -21,6 +24,7 @@ socials = [
     {'label': 'Twitter', 'href': 'https://twitter.com', 'icon': 'fab fa-twitter'},
     {'label': 'Instagram', 'href': 'https://instagram.com', 'icon': 'fab fa-instagram'},
 ]
+
 def login(request):
     if request.method == 'POST':
         username = request.POST['username']
@@ -33,15 +37,10 @@ def login(request):
             return render(request, 'login.html', {'error': 'Invalid username or password', 'navigation': navigation, 'socials': socials})
     else:
         return render(request, 'login.html', {'navigation': navigation, 'socials': socials})
-    
+
 def logout(request):
     auth_logout(request)
     return redirect('/')
-
-@login_required
-def list_spaces(request):
-    spaces = Space.objects.filter(user=request.user)
-    return render(request, 'list_spaces.html', {'spaces': spaces, 'navigation': navigation, 'socials': socials})
 
 def register(request):
     if request.method == 'POST':
@@ -58,56 +57,65 @@ def register(request):
 
     return render(request, 'register.html', {'form': form, 'navigation': navigation, 'socials': socials})
 
-@login_required
 def list_spaces(request):
-    spaces = Space.objects.filter(user=request.user)
-    return render(request, 'list_spaces.html', {'spaces': spaces,'navigation': navigation, 'socials': socials})
+    form = SpaceFilterForm(request.GET or None)
+    spaces = Space.objects.all()
+    if form.is_valid():
+        office_type = form.cleaned_data.get('office_type')
+        if (office_type):
+            spaces = spaces.filter(office_type=office_type)
+    return render(request, 'list_spaces.html', {'spaces': spaces, 'form': form})
 
-def create_update_space(request, space_id=None):
-    if space_id:
-        space = Space.objects.get(id=space_id)
-        if request.method == 'POST':
-            form = SpaceForm(request.POST, instance=space)
-            if form.is_valid():
-                form.save()
-                return redirect(reverse('list_spaces'))
-        else:
-            form = SpaceForm(instance=space)
-    else:
-        if request.method == 'POST':
-            form = SpaceForm(request.POST)
-            if form.is_valid():
-                form.save()
-                return redirect(reverse('list_spaces'))
-        else:
-            form = SpaceForm()
-
-    return render(request, 'space_form.html', {'form': form,'navigation': navigation, 'socials': socials})
-
-def delete_space(request, space_id):
-    space = Space.objects.get(id=space_id)
-    space.delete()
-    messages.success(request, "Space deleted successfully!")
-    return redirect(reverse('list_spaces'))
-
+@login_required
 def make_reservation(request, space_id):
-    space = Space.objects.get(id=space_id)
+    space = get_object_or_404(Space, id=space_id)
     if request.method == 'POST':
-        # Assuming you have a ReservationForm to handle this
         form = ReservationForm(request.POST)
         if form.is_valid():
             reservation = form.save(commit=False)
             reservation.space = space
-            reservation.save()
-            return redirect(reverse('list_spaces'))
+            reservation.user = request.user
+            try:
+                reservation.save()
+                return redirect('list_reservations')
+            except ValueError as e:
+                form.add_error(None, str(e))
     else:
         form = ReservationForm()
+    return render(request, 'make_reservation.html', {'form': form, 'space': space})
 
-    return render(request, 'make_reservation.html', {'form': form, 'space': space,'navigation': navigation, 'socials': socials})
+@login_required
+def list_reservations(request):
+    reservations = Reservation.objects.filter(user=request.user)
+    return render(request, 'list_reservations.html', {'reservations': reservations})
 
-def request_service(request, reservation_id):
-    reservation = Reservation.objects.get(id=reservation_id)
-    if request.method == 'POST':
-        # Process service request
-        pass
-    return render(request, 'request_service.html', {'reservation': reservation,'navigation': navigation, 'socials': socials})
+def get_time_slots(request, space_id):
+    date = request.GET.get('date')
+    space = Space.objects.get(id=space_id)
+    start_of_day = datetime.datetime.strptime(date, '%Y-%m-%d').replace(tzinfo=datetime.timezone.utc)
+    end_of_day = start_of_day + datetime.timedelta(days=1)
+    
+    reservations = Reservation.objects.filter(space=space, start_time__gte=start_of_day, end_time__lt=end_of_day)
+    reserved_hours = set()
+    
+    for reservation in reservations:
+        start_hour = reservation.start_time.hour
+        end_hour = reservation.end_time.hour
+        for hour in range(start_hour, end_hour):
+            reserved_hours.add(hour)
+    
+    time_slots = {}
+    for hour in range(7, 19):  # Assuming the office hours are from 7:00 to 18:00
+        if hour in reserved_hours:\
+            time_slots[f'{hour}:00'] = 'unavailable'
+        else:
+            time_slots[f'{hour}:00'] = 'available'
+    
+    # Mark slots between reservations as partially available
+    for i in range(7, 18):
+        if f'{i}:00' in time_slots and time_slots[f'{i}:00'] == 'unavailable' and f'{i + 1}:00' in time_slots and time_slots[f'{i + 1}:00'] == 'unavailable':
+            continue
+        if f'{i}:00' in time_slots and time_slots[f'{i}:00'] == 'unavailable' and f'{i + 1}:00' in time_slots and time_slots[f'{i + 1}:00'] == 'available':
+            time_slots[f'{i + 1}:00'] = 'partially-available'
+
+    return JsonResponse(time_slots)

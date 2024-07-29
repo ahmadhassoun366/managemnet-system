@@ -1,34 +1,24 @@
-{% extends 'base.html' %} {% load static %} {% block content %}
+{% extends 'base.html' %}
+{% block title %}Spaces{% endblock %}
+{% block content %}
+<div class="mb-6">
+    <form method="get" class="flex space-x-4">
+        {{ form.as_p }}
+        <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded">Filter</button>
+    </form>
+</div>
 
-<div class="max-w-xl mx-auto mt-10">
-  <h1 class="text-2xl font-bold mb-4">Spaces</h1>
-  {% if spaces %}
-  <ul>
-    {% for space in spaces %}
-    <li class="mb-2 flex justify-between items-center">
-      <span>
-        <strong>{{ space.name }}</strong> (Capacity: {{ space.capacity }})
-      </span>
-      <!-- Delete Button -->
-      <form
-        method="POST"
-        action="{% url 'delete_space' space.id %}"
-        class="inline-block ml-4"
-      >
-        {% csrf_token %}
-        <button
-          type="submit"
-          class="bg-red-500 hover:bg-red-700 text-white font-bold py-1 px-2 rounded"
-          onclick="return confirm('Are you sure?');"
-        >
-          Delete
-        </button>
-      </form>
-    </li>
-    {% endfor %}
-  </ul>
-  {% else %}
-  <p>No spaces available.</p>
-  {% endif %}
+<div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+  {% for space in spaces %}
+  <div class="bg-white p-6 rounded-lg shadow-md">
+    <h2 class="text-xl font-bold mb-2">{{ space.name }}</h2>
+    <p class="text-gray-700">{{ space.amenities }}</p>
+    <p class="text-gray-700">Location: {{ space.location }}</p>
+    <p class="text-gray-700">Price per hour: ${{ space.price_per_hour }}</p>
+    <a href="{% url 'make_reservation' space.id %}" class="mt-4 block bg-blue-500 text-white py-2 rounded text-center">Reserve</a>
+  </div>
+  {% empty %}
+  <p class="text-gray-500">No spaces available for the selected filter.</p>
+  {% endfor %}
 </div>
 {% endblock %}

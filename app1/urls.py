@@ -1,18 +1,12 @@
-# app1/urls.py
 from django.urls import path
-from .views import *
-from django.contrib.auth import views as auth_views
+from .views import list_spaces, make_reservation, list_reservations, get_time_slots, login, logout, register
 
 urlpatterns = [
     path('spaces/', list_spaces, name='list_spaces'),
-    path('spaces/add/', create_update_space, name='add_space'),
-    path('spaces/<int:space_id>/delete/', delete_space, name='delete_space'),
-    path('spaces/<int:space_id>/edit/', create_update_space, name='edit_space'),
     path('spaces/<int:space_id>/reserve/', make_reservation, name='make_reservation'),
-    path('reservations/<int:reservation_id>/service/', request_service, name='request_service'),
-    # login and register
-    path('register/', register, name='register'),
+    path('reservations/', list_reservations, name='list_reservations'),
+    path('spaces/<int:space_id>/time_slots/', get_time_slots, name='get_time_slots'),
     path('login/', login, name='login'),
     path('logout/', logout, name='logout'),
-
+    path('register/', register, name='register'),
 ]
