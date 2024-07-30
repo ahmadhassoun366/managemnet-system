@@ -41,7 +41,7 @@
       $('#displayEndTime').text('Not selected');
       $('#availabilityMessage').text('');
       $('#submitBtn').prop('disabled', true);
-      $('.time-slot').removeClass('bg-blue-500 bg-yellow-500').not('.bg-red-500').addClass('bg-green-500').prop('disabled', false);
+      $('.time-slot').removeClass('bg-blue-500').not('.bg-red-500').addClass('bg-green-500').prop('disabled', false);
     }
 
     $('#reservationDate').change(function() {
@@ -57,7 +57,7 @@
 
             for (var time in data) {
               var status = data[time];
-              var buttonClass = status === 'available' ? 'bg-green-500 hover:bg-green-700' : (status === 'partially-available' ? 'bg-yellow-500 hover:bg-yellow-700' : 'bg-red-500 cursor-not-allowed');
+              var buttonClass = status === 'available' ? 'bg-green-500 hover:bg-green-700' : 'bg-red-500 cursor-not-allowed';
               var disabled = status === 'unavailable' ? 'disabled' : '';
               var button = `<button type="button" class="time-slot ${buttonClass} text-white py-2 px-4 rounded mb-2 mr-2" data-time="${time}" ${disabled}>${time}</button>`;
               timeSlotsDiv.append(button);
@@ -70,7 +70,7 @@
                   startTime = selectedTime;
                   endTime = null;
                   $('.time-slot').removeClass('bg-blue-500').not('.bg-red-500').addClass('bg-green-500');
-                  $(this).removeClass('bg-green-500 bg-yellow-500').addClass('bg-blue-500');
+                  $(this).removeClass('bg-green-500').addClass('bg-blue-500');
                   $('#id_start_time').val(`${date}T${startTime}`);
                   $('#id_end_time').val('');
                   $('#displayStartTime').text(startTime);
@@ -94,7 +94,7 @@
 
                   if (isAvailable) {
                     for (let hour = startHour + 1; hour <= selectedHour; hour++) {
-                      $(`[data-time="${hour}:00"]`).removeClass('bg-green-500 bg-yellow-500').addClass('bg-blue-500');
+                      $(`[data-time="${hour}:00"]`).removeClass('bg-green-500').addClass('bg-blue-500');
                     }
                     endTime = selectedTime;
                     $('#id_end_time').val(`${date}T${endTime}`);
@@ -121,5 +121,4 @@
     });
   });
 </script>
-
 {% endblock %}

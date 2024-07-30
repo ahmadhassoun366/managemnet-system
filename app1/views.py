@@ -106,16 +106,9 @@ def get_time_slots(request, space_id):
     
     time_slots = {}
     for hour in range(7, 19):  # Assuming the office hours are from 7:00 to 18:00
-        if hour in reserved_hours:\
+        if hour in reserved_hours:
             time_slots[f'{hour}:00'] = 'unavailable'
         else:
             time_slots[f'{hour}:00'] = 'available'
     
-    # Mark slots between reservations as partially available
-    for i in range(7, 18):
-        if f'{i}:00' in time_slots and time_slots[f'{i}:00'] == 'unavailable' and f'{i + 1}:00' in time_slots and time_slots[f'{i + 1}:00'] == 'unavailable':
-            continue
-        if f'{i}:00' in time_slots and time_slots[f'{i}:00'] == 'unavailable' and f'{i + 1}:00' in time_slots and time_slots[f'{i + 1}:00'] == 'available':
-            time_slots[f'{i + 1}:00'] = 'partially-available'
-
     return JsonResponse(time_slots)
