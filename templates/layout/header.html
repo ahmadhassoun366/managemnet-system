@@ -22,7 +22,7 @@
           {% if user.userprofile.profile_picture %}
           <img src="{{ user.userprofile.profile_picture.url }}" alt="{{ user.username }}" class="w-10 h-10 rounded-full object-cover">
           {% else %}
-          <img src="{% static 'profile_pictures/default.jpg' %}" alt="{{ user.username }}" class="w-10 h-10 rounded-full object-cover">
+          <img src="{% static 'profile_pictures/default.jpg' %}" alt="Default Profile Picture" class="w-10 h-10 rounded-full object-cover">
           {% endif %}
           <span class="text-gray-700 dark:text-gray-300">{{ user.username }}</span>
         </a>
