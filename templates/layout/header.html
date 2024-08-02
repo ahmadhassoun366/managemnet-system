@@ -1,88 +1,93 @@
+{% load static %}
+<body class="bg-white dark:bg-gray-950">
+  <nav class="px-10 dark:bg-gray-950 bg-white shadow-xl">
+    <div class="container-2 mx-auto flex items-center justify-between h-[80px]">
+      <!-- brand -->
+      <a href="/" class="text-2xl font-bold dark:text-white lg:text-3xl hover:text-blue-500 transition duration-300">PrestigeReserve</a>
 
-  <body class="bg-white dark:bg-gray-950">
-    <nav class="px-10 dark:bg-gray-950 bg-white shadow-xl">
-      <div
-        class="container-2 mx-auto flex items-center justify-between h-[80px]"
-      >
-        <!-- brand -->
-        <a href="/" class="text-2xl font-bold dark:text-white lg:text-3xl"
-          >DAC</a
-        >
-
-        <!-- desktop menu -->
-        <div class="hidden md:flex items-center gap-x-6 h-full">
-          <a href="/" class="navbar-link lg:mx-6">Home</a>
-          <a href="/products" class="navbar-link lg:mx-6">Products</a>
-          <a href="/about" class="navbar-link lg:mx-6">About</a>
-          {% if user.is_authenticated %}
-          <form method="post" action="{% url 'logout' %}">
-            {% csrf_token %}
-            <button class="px-6 py-2 rounded-full text-sm text-center disabled:text-gray-300 disabled:bg-gray-300 disabled:border-transparent disabled:cursor-not-allowed disabled:hover:border-transparent disabled:hover:cursor-not-allowed bg-red-500 text-white hover:bg-red-400">Logout</button>
-          </form>
-          {% else %}
-          <a href="{% url 'login' %}" class="blue medium w-[117px]">Sign In</a>
-          <a
-            href="{% url 'register' %}"
-            class="relative px-6 py-3 rounded-full text-sm text-center disabled:text-gray-300 disabled:bg-gray-300 disabled:border-transparent disabled:cursor-not-allowed disabled:hover:border-transparent disabled:hover:cursor-not-allowed bg-blue-500 text-white hover:bg-blue-400"
-            >Sign Up</a
-          >
-          {% endif %}
-        </div>
-
-        <!-- Mobile burger icon -->
-        <div class="md:hidden">
-          <button
-            data-collapse-toggle="navbar-sticky"
-            type="button"
-            class="burger"
-            aria-controls="navbar-sticky"
-            aria-expanded="true"
-          >
-            <div class="h-line h-line1"></div>
-            <div class="h-line h-line2"></div>
-            <div class="h-line h-line3"></div>
-          </button>
-        </div>
-
-        <!-- Mobile navigation menu -->
-        <div
-          id="mobile-menu"
-          class="hidden fixed top-0 left-0 w-full h-full dark:bg-gray-950 bg-white z-50 p-4 mt-header space-y-6"
-        >
-          <a
-            href="/"
-            class="navbar-link flex items-center gap-x-2 justify-between w-full"
-            >Home</a
-          >
-          <a
-            href="/products"
-            class="navbar-link flex items-center gap-x-2 justify-between w-full"
-            >Products</a
-          >
-          <a
-            href="/about"
-            class="navbar-link flex items-center gap-x-2 justify-between w-full"
-            >About</a
-          >
-          {% if user.is_authenticated %}
-          <form method="post" action="{% url 'logout' %}">
-            {% csrf_token %}
-            <button class="px-6 py-2 rounded-full text-sm text-center disabled:text-gray-300 disabled:bg-gray-300 disabled:border-transparent disabled:cursor-not-allowed disabled:hover:border-transparent disabled:hover:cursor-not-allowed bg-red-500 text-white hover:bg-red-400">Logout</button>
-          </form>
-          {% else %}
-          <a href="{% url 'login' %}" class="blue medium w-full">Sign In</a>
-          <a
-            href="{% url 'register' %}"
-            class="px-6 py-2 rounded-full text-sm text-center disabled:text-gray-300 disabled:bg-gray-300 disabled:border-transparent disabled:cursor-not-allowed disabled:hover:border-transparent disabled:hover:cursor-not-allowed bg-blue-500 text-white hover:bg-blue-400"
-            >Sign Up</a
-          >
-          {% endif %}
-         
-          </div>
-        </div>
+      <!-- centered links -->
+      <div class="flex-1 flex items-center justify-center gap-x-8 h-full hidden md:flex">
+        <a href="/" class="navbar-link text-lg lg:mx-6 text-gray-700 dark:text-gray-300 hover:text-blue-500 transition duration-300">Home</a>
+        <a href="{% url 'about' %}" class="navbar-link text-lg lg:mx-6 text-gray-700 dark:text-gray-300 hover:text-blue-500 transition duration-300">About</a>
+        {% if user.is_authenticated %}
+        <a href="{% url 'list_spaces' %}" class="navbar-link text-lg lg:mx-6 text-gray-700 dark:text-gray-300 hover:text-blue-500 transition duration-300">Available Spaces</a>
+        <a href="{% url 'list_reservations' %}" class="navbar-link text-lg lg:mx-6 text-gray-700 dark:text-gray-300 hover:text-blue-500 transition duration-300">My Reservations</a>
+        {% endif %}
       </div>
-    </nav>
 
-    {% block content %}{% endblock %}
+      <!-- desktop menu -->
+      <div class="hidden md:flex items-center gap-x-6 h-full">
+        {% if user.is_authenticated %}
+        <a href="{% url 'profile' %}" class="flex items-center gap-x-4">
+          {% if user.userprofile.profile_picture %}
+          <img src="{{ user.userprofile.profile_picture.url }}" alt="{{ user.username }}" class="w-10 h-10 rounded-full object-cover">
+          {% else %}
+          <img src="{% static 'profile_pictures/default.jpg' %}" alt="{{ user.username }}" class="w-10 h-10 rounded-full object-cover">
+          {% endif %}
+          <span class="text-gray-700 dark:text-gray-300">{{ user.username }}</span>
+        </a>
+        <form method="post" action="{% url 'logout' %}" class="inline">
+          {% csrf_token %}
+          <button class="px-6 py-2 rounded-full text-sm text-center bg-red-500 text-white hover:bg-red-400 transition duration-300">Logout</button>
+        </form>
+        {% else %}
+        <a href="{% url 'login' %}" class="px-6 py-2 rounded-full text-sm text-center bg-blue-600 text-white hover:bg-blue-500 transition duration-300">Sign In</a>
+        <a href="{% url 'register' %}" class="px-6 py-2 rounded-full text-sm text-center bg-green-600 text-white hover:bg-green-500 transition duration-300">Sign Up</a>
+        {% endif %}
+      </div>
 
- 
+      <!-- Mobile burger icon -->
+      <div class="md:hidden">
+        <button id="burger-menu" type="button" class="relative z-50 flex flex-col items-center justify-center w-10 h-10 rounded focus:outline-none">
+          <div class="w-6 h-1 bg-gray-700 dark:bg-gray-300 mb-1.5 transition-transform duration-300 transform" id="line1"></div>
+          <div class="w-6 h-1 bg-gray-700 dark:bg-gray-300 mb-1.5 transition-opacity duration-300" id="line2"></div>
+          <div class="w-6 h-1 bg-gray-700 dark:bg-gray-300 transition-transform duration-300 transform" id="line3"></div>
+        </button>
+      </div>
+    </div>
+
+    <!-- Mobile navigation menu -->
+    <div id="mobile-menu" class="hidden fixed inset-0 dark:bg-gray-950 bg-white z-40 p-6 flex flex-col items-center space-y-6 transform translate-x-full transition-transform duration-300">
+      <a href="/" class="navbar-link text-lg text-gray-700 dark:text-gray-300 hover:text-blue-500 transition duration-300">Home</a>
+      <a href="{% url 'about' %}" class="navbar-link text-lg text-gray-700 dark:text-gray-300 hover:text-blue-500 transition duration-300">About</a>
+      {% if user.is_authenticated %}
+      <a href="{% url 'list_spaces' %}" class="navbar-link text-lg text-gray-700 dark:text-gray-300 hover:text-blue-500 transition duration-300">Available Spaces</a>
+      <a href="{% url 'list_reservations' %}" class="navbar-link text-lg text-gray-700 dark:text-gray-300 hover:text-blue-500 transition duration-300">My Reservations</a>
+      <a href="{% url 'profile' %}" class="navbar-link text-lg text-gray-700 dark:text-gray-300 hover:text-blue-500 transition duration-300">Profile</a>
+      <form method="post" action="{% url 'logout' %}" class="w-full text-center">
+        {% csrf_token %}
+        <button class="px-6 py-2 rounded-full text-sm text-center w-full bg-red-500 text-white hover:bg-red-400 transition duration-300">Logout</button>
+      </form>
+      {% else %}
+      <a href="{% url 'login' %}" class="px-6 py-2 rounded-full text-sm text-center w-full bg-blue-600 text-white hover:bg-blue-500 transition duration-300">Sign In</a>
+      <a href="{% url 'register' %}" class="px-6 py-2 rounded-full text-sm text-center w-full bg-green-600 text-white hover:bg-green-500 transition duration-300">Sign Up</a>
+      {% endif %}
+    </div>
+  </nav>
+
+  {% block content %}{% endblock %}
+
+  <script>
+    document.getElementById('burger-menu').addEventListener('click', function() {
+      var mobileMenu = document.getElementById('mobile-menu');
+      var ariaExpanded = this.getAttribute('aria-expanded') === 'true' || false;
+      this.setAttribute('aria-expanded', !ariaExpanded);
+      mobileMenu.classList.toggle('hidden');
+      mobileMenu.classList.toggle('translate-x-full');
+
+      var line1 = document.getElementById('line1');
+      var line2 = document.getElementById('line2');
+      var line3 = document.getElementById('line3');
+
+      if (ariaExpanded) {
+        line1.classList.remove('transform', 'rotate-45', 'translate-y-2');
+        line3.classList.remove('transform', '-rotate-45', '-translate-y-2');
+        line2.classList.remove('opacity-0');
+      } else {
+        line1.classList.add('transform', 'rotate-45', 'translate-y-2');
+        line3.classList.add('transform', '-rotate-45', '-translate-y-2');
+        line2.classList.add('opacity-0');
+      }
+    });
+  </script>
+</body>

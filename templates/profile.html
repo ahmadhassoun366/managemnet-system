@@ -1,0 +1,99 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Profile{% endblock %}
+{% block content %}
+<div class="max-w-7xl mx-auto p-8 bg-white rounded-lg shadow-lg m-10">
+  <h1 class="text-4xl font-bold mb-8 text-center text-gray-800">Profile</h1>
+  
+  <form method="post" enctype="multipart/form-data" class="space-y-8">
+    {% csrf_token %}
+    <div class="flex flex-col md:flex-row items-center md:space-x-6">
+      <div class="flex-shrink-0 mb-6 md:mb-0">
+        {% if user.userprofile.profile_picture %}
+          <img src="{{ user.userprofile.profile_picture.url }}" alt="Profile Picture" class="w-32 h-32 rounded-full object-cover shadow-md">
+        {% else %}
+          <img src="{% static 'profile_pictures/default.jpg' %}" alt="Default Profile Picture" class="w-32 h-32 rounded-full object-cover shadow-md">
+        {% endif %}
+      </div>
+      <div class="cursor-pointer">
+        <label for="id_profile_picture" class="cursor-pointer block text-sm font-medium text-gray-700">Change Profile Picture</label>
+        <input
+          type="file"
+          id="id_profile_picture"
+          name="profile_picture"
+          class="cursor-pointer mt-1 block w-32 shadow-sm sm:text-sm border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
+        />
+      </div>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+      <div>
+        <label for="id_username" class="block text-sm font-medium text-gray-700">Username</label>
+        <input
+          type="text"
+          id="id_username"
+          name="username"
+          value="{{ user.username }}"
+          class="mt-1 bg-gray-100 block p-3 w-full shadow-sm sm:text-sm border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
+          readonly
+        />
+        <p class="mt-1 text-sm text-gray-500">You cannot change your username.</p>
+      </div>
+      <div>
+        <label for="id_first_name" class="block text-sm font-medium text-gray-700">First Name</label>
+        <input
+          type="text"
+          id="id_first_name"
+          name="first_name"
+          value="{{ user.first_name }}"
+          class="mt-1 bg-gray-100 block p-3 w-full shadow-sm sm:text-sm border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
+        />
+      </div>
+      <div>
+        <label for="id_last_name" class="block text-sm font-medium text-gray-700">Last Name</label>
+        <input
+          type="text"
+          id="id_last_name"
+          name="last_name"
+          value="{{ user.last_name }}"
+          class="mt-1 bg-gray-100 block p-3 w-full shadow-sm sm:text-sm border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
+        />
+      </div>
+      <div>
+        <label for="id_email" class="block text-sm font-medium text-gray-700">Email</label>
+        <input
+          type="email"
+          id="id_email"
+          name="email"
+          value="{{ user.email }}"
+          class="mt-1 bg-gray-100 block p-3 w-full shadow-sm sm:text-sm border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
+        />
+      </div>
+      <div class="col-span-1 md:col-span-2">
+        <label for="id_bio" class="block text-sm font-medium text-gray-700">Bio</label>
+        <textarea
+          id="id_bio"
+          name="bio"
+          class="mt-1 bg-gray-100 block p-3 w-full shadow-sm sm:text-sm border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
+          rows="4"
+        >{{ user.userprofile.bio }}</textarea>
+      </div>
+      <div class="col-span-1 md:col-span-2">
+        <label for="id_location" class="block text-sm font-medium text-gray-700">Location</label>
+        <input
+          type="text"
+          id="id_location"
+          name="location"
+          value="{{ user.userprofile.location }}"
+          class="mt-1 bg-gray-100 block p-3 w-full shadow-sm sm:text-sm border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
+        />
+      </div>
+    </div>
+
+    <div class="flex flex-col lg:flex-row justify-center items-center mt-8 gap-4">
+      <button type="submit" class="w-44 bg-blue-600 hover:bg-blue-800 text-white font-bold py-2 px-4 rounded shadow-lg transition duration-300 ease-in-out transform hover:scale-105">Save Changes</button>
+      <a href="{% url 'change_password' %}" class="w-44 bg-gray-600 hover:bg-gray-800 text-white font-bold py-2 px-4 rounded shadow-lg transition duration-300 ease-in-out transform hover:scale-105">Change Password</a>
+    </div>
+  </form>
+</div>
+{% endblock %}

@@ -1,0 +1,77 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Home{% endblock %}
+{% block content %}
+<!-- Hero Section -->
+<div class="bg-cover bg-center h-screen" style="background-image: url('/static/images/bg.jpg');">
+  <div class="h-full flex items-center justify-center bg-black bg-opacity-50">
+    <div class="text-center text-white px-4">
+      <h1 class="text-5xl font-bold mb-6">Welcome to PrestigeReserve</h1>
+      <p class="text-xl mb-6">Find and reserve the perfect space for your needs</p>
+      <a href="{% url 'about' %}" class="px-6 py-3 rounded-full bg-blue-600 text-white text-lg hover:bg-blue-500 transition duration-300">Learn More</a>
+    </div>
+  </div>
+</div>
+
+<!-- Services Section -->
+<div class="max-w-7xl mx-auto py-16 px-4">
+  <h2 class="text-4xl font-bold text-center mb-8">Our Services</h2>
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+    <div class="bg-white p-6 rounded-lg shadow-lg">
+      <h3 class="text-2xl font-semibold mb-2">Office Reservations</h3>
+      <p class="text-gray-700">Reserve private offices for short-term or long-term use, fully equipped to meet all your professional needs.</p>
+    </div>
+    <div class="bg-white p-6 rounded-lg shadow-lg">
+      <h3 class="text-2xl font-semibold mb-2">Meeting Room Bookings</h3>
+      <p class="text-gray-700">Book state-of-the-art meeting rooms with all the amenities you need for successful business meetings and conferences.</p>
+    </div>
+    <div class="bg-white p-6 rounded-lg shadow-lg">
+      <h3 class="text-2xl font-semibold mb-2">Event Spaces</h3>
+      <p class="text-gray-700">Find and reserve event spaces for seminars, workshops, and other corporate events, tailored to fit your requirements.</p>
+    </div>
+  </div>
+</div>
+
+<!-- Featured Spaces Section -->
+<div class="bg-gray-100 py-16">
+  <div class="max-w-7xl mx-auto px-4">
+    <h2 class="text-4xl font-bold text-center mb-8">Featured Spaces</h2>
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+      {% for space in featured_spaces %}
+      <div class="bg-white rounded-lg shadow-md overflow-hidden transition-transform transform hover:scale-105">
+        <div class="h-48 overflow-hidden">
+          {% if space.office_type == 'single' %}
+          <img src="/static/images/single.jpg" alt="Single Office for 1 Person" class="w-full h-full object-cover">
+          {% elif space.office_type == 'multiple' %}
+          <img src="/static/images/multiple.jpg" alt="Office for Multiple Persons" class="w-full h-full object-cover">
+          {% elif space.office_type == 'meeting' %}
+          <img src="/static/images/meeting.jpg" alt="Meeting Room" class="w-full h-full object-cover">
+          {% elif space.office_type == 'lab' %}
+          <img src="/static/images/lab.jpg" alt="Lab with PCs" class="w-full h-full object-cover">
+          {% elif space.office_type == 'suite' %}
+          <img src="/static/images/private.jpg" alt="Private Office Suite" class="w-full h-full object-cover">
+          {% else %}
+          <img src="/static/images/default-space.jpg" alt="Default space image" class="w-full h-full object-cover">
+          {% endif %}
+        </div>
+        <div class="p-6">
+          <h3 class="text-2xl font-bold text-gray-800 mb-2">{{ space.name }}</h3>
+          <p class="text-gray-600 mb-4">{{ space.amenities }}</p>
+          <p class="text-gray-700 mb-2"><span class="font-semibold">Location:</span> {{ space.location }}</p>
+          <p class="text-gray-700 mb-4"><span class="font-semibold">Price per hour:</span> ${{ space.price_per_hour }}</p>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+</div>
+
+<!-- Call to Action Section -->
+<div class="bg-blue-600 py-16">
+  <div class="max-w-7xl mx-auto text-center text-white px-4">
+    <h2 class="text-4xl font-bold mb-6">Ready to Book Your Space?</h2>
+    <p class="text-xl mb-6">Join thousands of satisfied customers who have found their perfect space with PrestigeReserve.</p>
+    <a href="{% url 'register' %}" class="px-6 py-3 rounded-full bg-white text-blue-600 text-lg hover:bg-gray-100 transition duration-300">Get Started</a>
+  </div>
+</div>
+{% endblock %}

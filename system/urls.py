@@ -21,7 +21,6 @@ from django.conf.urls.static import static
 from django.views.generic.base import RedirectView
 
 urlpatterns = [
-                 path('', RedirectView.as_view(url='login/', permanent=False)),  # Redirect root URL to space list
-                  path('admin/', admin.site.urls),
-                  path('', include('app1.urls'))
-              ] + static(settings.STATIC_URL, documnet_root=settings.STATIC_ROOT)
+    path('admin/', admin.site.urls),
+    path('', include('app1.urls')),
+] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT) + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

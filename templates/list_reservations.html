@@ -1,25 +1,54 @@
 {% extends 'base.html' %}
 {% block title %}My Reservations{% endblock %}
 {% block content %}
-<div class="bg-white p-6 rounded-lg shadow-md">
-  <h2 class="text-2xl font-bold mb-4">My Reservations</h2>
-  <table class="min-w-full bg-white">
-    <thead class="bg-gray-200">
-      <tr>
-        <th class="py-2 px-4">Space</th>
-        <th class="py-2 px-4">Start Time</th>
-        <th class="py-2 px-4">End Time</th>
-      </tr>
-    </thead>
-    <tbody>
-      {% for reservation in reservations %}
-      <tr>
-        <td class="py-2 px-4">{{ reservation.space.name }}</td>
-        <td class="py-2 px-4">{{ reservation.start_time }}</td>
-        <td class="py-2 px-4">{{ reservation.end_time }}</td>
-      </tr>
-      {% endfor %}
-    </tbody>
-  </table>
+<div class="max-w-5xl mx-auto bg-white p-8 rounded-lg shadow-md m-6">
+  <h2 class="text-3xl font-bold mb-6 text-center">My Reservations</h2>
+  <div class="overflow-x-auto">
+    <table class="min-w-full bg-white border border-gray-200 rounded-lg shadow-sm">
+      <thead class="bg-gray-200 text-gray-600 uppercase text-sm leading-normal">
+        <tr>
+          <th class="py-3 px-6 text-left">Space</th>
+          <th class="py-3 px-6 text-left">Start Time</th>
+          <th class="py-3 px-6 text-left">End Time</th>
+          <th class="py-3 px-6 text-left">Status</th>
+          <th class="py-3 px-6 text-left">Actions</th>
+        </tr>
+      </thead>
+      <tbody class="text-gray-600 text-sm font-light">
+        {% for reservation in reservations %}
+        <tr class="border-b border-gray-200 hover:bg-gray-100" onclick="window.location=`{% url 'reservation_detail' reservation.id %}`" style="cursor: pointer;">
+          <td class="py-3 px-6 text-left whitespace-nowrap">
+            <div class="flex items-center">
+              <span class="font-medium">{{ reservation.space.name }}</span>
+            </div>
+          </td>
+          <td class="py-3 px-6 text-left">
+            <div class="flex items-center">
+              <span>{{ reservation.start_time }}</span>
+            </div>
+          </td>
+          <td class="py-3 px-6 text-left">
+            <div class="flex items-center">
+              <span>{{ reservation.end_time }}</span>
+            </div>
+          </td>
+          <td class="py-3 px-6 text-left">
+            <span class="bg-blue-200 text-blue-600 py-1 px-3 rounded-full text-xs">{{ reservation.get_status_display }}</span>
+          </td>
+          <td class="py-3 px-6 text-left">
+            {% if reservation.status == 'pending' %}
+            <a href="{% url 'confirm_reservation' reservation.id %}" class="bg-green-500 hover:bg-green-700 text-white font-bold py-1 px-3 rounded mr-2">Confirm</a>
+            <a href="{% url 'cancel_reservation' reservation.id %}" class="bg-red-500 hover:bg-red-700 text-white font-bold py-1 px-3 rounded">Cancel</a>
+            {% endif %}
+          </td>
+        </tr>
+        {% empty %}
+        <tr>
+          <td colspan="5" class="text-center py-4">No reservations found.</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
 </div>
 {% endblock %}

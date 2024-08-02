@@ -1,75 +1,54 @@
 {% extends 'base.html' %} {% load static %} {% block content %}
-<div class="h-full flex items-center justify-center  mt-0.5 p-8">
-  <div
-    class="flex gap-1 w-5/6 h-5/6 drop-shadow-lg rounded bg-gray-50 dark:bg-abrandc-dark-grey"
-  >
-    <div class="hidden lg:inline-flex w-1/2 bg-white dark:bg-abrandc-dark-grey">
-      <img
-        src="{% static 'images/imgLogin.png' %}"
-        alt="Login Image"
-        class="w-full h-full object-cover"
-      />
-    </div>
-    <div
-      class="lg:w-1/2 lg:pl-20 lg:pr-20 pt-5 pb-5 pl-5 pr-5 flex items-center flex-col justify-center"
-    >
-      <h1
-        class="text-center text-3xl font-semibold mb-8 dark:text-white text-black"
-      >
+<div class="h-full flex items-center justify-center mt-0.5 p-20 bg-gray-50 dark:bg-gray-900">
+  <div class="flex flex-col lg:flex-row w-full max-w-4xl drop-shadow-lg rounded bg-white dark:bg-gray-800">
+    <div class="hidden lg:flex lg:w-1/2 bg-cover rounded-l-lg" style="background-image: url('/static/images/imgLogin.png');"></div>
+
+    <div class="lg:w-1/2 w-full p-8 flex flex-col justify-center">
+      <h1 class="text-center text-4xl font-semibold mb-8 dark:text-white text-gray-900">
         Sign in
       </h1>
-      <form class="space-y-4" method="post">
+      <form class="space-y-6" method="post">
         {% csrf_token %}
-        <div class="space-y-2">
-          <label
-            for="username"
-            class="dark:text-white text-black"
-            >Username</label
-          >
+        <div>
+          <label for="username" class="block mb-2 text-sm font-medium dark:text-gray-300 text-gray-700">Username</label>
           <input
             id="username"
             name="username"
             type="text"
             autocomplete="username"
             required
-            class="w-full h-10 mb-2 px-5 rounded-md drop-shadow bg-abrandc-light-grey dark:bg-gray-700"
+            class="w-full h-12 px-4 rounded-md border dark:border-gray-600 border-gray-300 bg-gray-100 dark:bg-gray-700 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
             placeholder="Enter your username"
           />
         </div>
-        <div class="space-y-2">
-          <label
-            for="password"
-            class="dark:text-white text-black"
-            >Password</label
-          >
+        <div>
+          <label for="password" class="block mb-2 text-sm font-medium dark:text-gray-300 text-gray-700">Password</label>
           <input
             id="password"
             name="password"
             type="password"
             autocomplete="current-password"
             required
-            class="w-full h-10 mb-2 px-5 rounded-md drop-shadow bg-abrandc-light-grey dark:bg-gray-700"
+            class="w-full h-12 px-4 rounded-md border dark:border-gray-600 border-gray-300 bg-gray-100 dark:bg-gray-700 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
             placeholder="Enter your password"
           />
         </div>
-        <div>
-          <a
-            href="{% url 'register' %}"
-            class="text-sm text-CustomColor1 rounded-md underline-offset-8 underline dark:text-blue-500 text-black"
-            >Don't have an account?</a
-          >
+        <div class="flex items-center justify-between">
+          <a href="{% url 'register' %}" class="text-sm text-blue-600 dark:text-blue-400 underline hover:text-blue-800 dark:hover:text-blue-600">
+            Don't have an account?
+          </a>
         </div>
         <div class="text-center">
           <button
             type="submit"
-            class="mt-8 w-2/6 font-semibold text-white bg-blue-700 py-2 rounded-md"
+            class="w-full h-12 font-semibold text-white bg-blue-600 hover:bg-blue-700 rounded-md transition duration-300"
           >
-            Submit
+            SignIn
           </button>
         </div>
       </form>
       {% if error %}
-      <p class="mt-2 text-sm text-red-600">{{ error }}</p>
+      <p class="mt-4 text-sm text-red-600 text-center">{{ error }}</p>
       {% endif %}
     </div>
   </div>

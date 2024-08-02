@@ -1,78 +1,59 @@
 {% extends 'base.html' %} {% load static %} {% block content %}
-<div class="h-full p-8 flex items-center justify-center">
-  <div
-    class="flex gap-1 w-5/6 h-5/6 drop-shadow-lg bg-gray-50 dark:bg-gray-950"
-  >
-    <div class="hidden lg:inline-flex w-1/2 bg-gray-50 dark:bg-gray-950">
-      <img
-        src="{% static 'images/imgSignUp.png' %}"
-        alt="Sign Up Image"
-        class="w-full h-full object-cover"
-      />
-    </div>
-    <div
-      class="lg:w-1/2 lg:px-10 p-5 dark:text-white text-abrandc-dark-blackish"
-    >
-      <h1 class="text-center text-3xl font-semibold mb-5 lg:mt-8">Sign up</h1>
-      <form class="text-lg space-y-4" method="post">
+<div class="h-full flex items-center justify-center p-8 bg-gray-50 dark:bg-gray-900">
+  <div class="flex flex-col lg:flex-row w-full max-w-4xl drop-shadow-lg rounded bg-white dark:bg-gray-800">
+    <div class="hidden lg:flex lg:w-1/2 bg-cover rounded-l-lg" style="background-image: url('/static/images/imgSignUp.png')"></div>
+
+    <div class="lg:w-1/2 w-full p-8 flex flex-col justify-center">
+      <h1 class="text-center text-4xl font-semibold mb-8 dark:text-white text-gray-900">
+        Sign up
+      </h1>
+      <form class="space-y-6" method="post">
         {% csrf_token %}
-        <div class="space-y-2">
-          <label
-            for="id_username"
-            class="dark:text-white text-abrandc-dark-blackish"
-            >Username</label
-          >
+        <div>
+          <label for="id_username" class="block mb-2 text-sm font-medium dark:text-gray-300 text-gray-700">Username</label>
           <input
             id="id_username"
             name="username"
             type="text"
             autocomplete="username"
             required
-            class="w-full h-10 mb-2 px-5 rounded-md drop-shadow bg-abrandc-light-grey dark:bg-gray-700"
+            class="w-full h-12 px-4 rounded-md border dark:border-gray-600 border-gray-300 bg-gray-100 dark:bg-gray-700 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
             placeholder="Enter your username"
           />
         </div>
-        <div class="space-y-2">
-          <label
-            for="id_password1"
-            class="dark:text-white text-abrandc-dark-blackish"
-            >Password</label
-          >
+        <div>
+          <label for="id_password1" class="block mb-2 text-sm font-medium dark:text-gray-300 text-gray-700">Password</label>
           <input
             id="id_password1"
             name="password1"
             type="password"
             autocomplete="new-password"
             required
-            class="w-full h-10 mb-2 px-5 rounded-md drop-shadow bg-abrandc-light-grey dark:bg-gray-700"
+            class="w-full h-12 px-4 rounded-md border dark:border-gray-600 border-gray-300 bg-gray-100 dark:bg-gray-700 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
             placeholder="Enter your password"
           />
         </div>
-        <div class="space-y-2">
-          <label
-            for="id_password2"
-            class="dark:text-white text-abrandc-dark-blackish"
-            >Confirm password</label
-          >
+        <div>
+          <label for="id_password2" class="block mb-2 text-sm font-medium dark:text-gray-300 text-gray-700">Confirm Password</label>
           <input
             id="id_password2"
             name="password2"
             type="password"
             autocomplete="new-password"
             required
-            class="w-full h-10 mb-2 px-5 rounded-md drop-shadow bg-abrandc-light-grey dark:bg-gray-700"
+            class="w-full h-12 px-4 rounded-md border dark:border-gray-600 border-gray-300 bg-gray-100 dark:bg-gray-700 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
             placeholder="Confirm your password"
           />
         </div>
-        <a
-          href="{% url 'login' %}"
-          class="text-base text-blue-500 underline underline-offset-4"
-          >Already have an account?</a
-        >
+        <div class="flex items-center justify-between">
+          <a href="{% url 'login' %}" class="text-sm text-blue-600 dark:text-blue-400 underline hover:text-blue-800 dark:hover:text-blue-600">
+            Already have an account?
+          </a>
+        </div>
         <div class="text-center">
           <button
             type="submit"
-            class="mt-4 w-2/6 font-semibold text-white bg-blue-700 py-2 rounded-md"
+            class="w-full h-12 font-semibold text-white bg-blue-600 hover:bg-blue-700 rounded-md transition duration-300"
           >
             Submit
           </button>
@@ -80,11 +61,13 @@
       </form>
       {% if form.errors %}
       <div class="error-messages mt-4">
-        {% for field in form %} {% if field.errors %}
+        {% for field in form %}
+        {% if field.errors %}
         <div class="text-red-600">
           <strong>{{ field.label }}:</strong> {{ field.errors|striptags }}
         </div>
-        {% endif %} {% endfor %}
+        {% endif %}
+        {% endfor %}
       </div>
       {% endif %}
     </div>

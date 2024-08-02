@@ -1,124 +1,85 @@
 {% extends 'base.html' %}
+{% load static %}
 {% block title %}Make Reservation{% endblock %}
 {% block content %}
-<div class="max-w-lg mx-auto bg-white p-6 rounded-lg shadow-md">
-  <h2 class="text-2xl font-bold mb-4">Reserve Space: {{ space.name }}</h2>
-  <label for="reservationDate" class="block text-gray-700">Select Date:</label>
-  <input type="date" id="reservationDate" class="block w-full mt-2 mb-4 p-2 border rounded">
-  
-  <div id="timeSlots" class="mb-4"></div>
-  
-  <form method="post" id="reservationForm">
+<div class="max-w-3xl mx-auto bg-white p-8 rounded-lg shadow-md mt-6">
+  <h2 class="text-3xl font-bold mb-6 text-center">Make Reservation for {{ space.name }}</h2>
+  <form method="POST">
     {% csrf_token %}
-    <div id="selectedTimes" class="mb-4 text-gray-700">
-      <p>Start Time: <span id="displayStartTime">Not selected</span></p>
-      <p>End Time: <span id="displayEndTime">Not selected</span></p>
+    <div class="mb-4">
+      <label for="date" class="block text-lg font-medium text-gray-700 mb-2">Select Date:</label>
+      <input type="date" id="date" name="date" required class="w-full px-3 py-2 border rounded-lg shadow-sm focus:outline-none focus:ring focus:border-blue-300">
     </div>
-    <div id="availabilityMessage" class="text-red-500"></div>
-    <div class="flex justify-between">
-      <button type="submit" class="bg-blue-500 text-white py-2 px-4 rounded mt-4" id="submitBtn" disabled>Reserve</button>
-      <button type="button" class="bg-gray-500 text-white py-2 px-4 rounded mt-4" id="resetBtn">Reset</button>
+    <div id="time-slots" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mt-4">
+      <!-- Time slots will be loaded here by JavaScript -->
     </div>
-    <input type="hidden" id="id_start_time" name="start_time">
-    <input type="hidden" id="id_end_time" name="end_time">
+    <input type="hidden" id="start_time" name="start_time">
+    <input type="hidden" id="end_time" name="end_time">
+    <button type="submit" class="mt-6 w-full py-3 bg-blue-600 text-white font-semibold rounded-lg shadow-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50" disabled id="reserve-btn">Reserve</button>
   </form>
-  
-  <a href="{% url 'list_spaces' %}" class="mt-4 block text-blue-500 underline">Back to Spaces</a>
 </div>
 
-<script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
-<script>
-  document.addEventListener('DOMContentLoaded', function() {
-    let startTime = null;
-    let endTime = null;
+<script id="space-data" type="application/json">
+  {{ space.id }}
+</script>
 
-    function resetSelection() {
-      startTime = null;
-      endTime = null;
-      $('#id_start_time').val('');
-      $('#id_end_time').val('');
-      $('#displayStartTime').text('Not selected');
-      $('#displayEndTime').text('Not selected');
-      $('#availabilityMessage').text('');
-      $('#submitBtn').prop('disabled', true);
-      $('.time-slot').removeClass('bg-blue-500').not('.bg-red-500').addClass('bg-green-500').prop('disabled', false);
+<script>
+  document.addEventListener("DOMContentLoaded", function() {
+    const spaceId = JSON.parse(document.getElementById('space-data').textContent);
+    const timeSlotsDiv = document.getElementById('time-slots');
+    const reserveBtn = document.getElementById('reserve-btn');
+    const startTimeInput = document.getElementById('start_time');
+    const endTimeInput = document.getElementById('end_time');
+    
+    // Function to load time slots
+    function loadTimeSlots(date) {
+      fetch(`/spaces/${spaceId}/time_slots/?date=${date}`)
+        .then(response => response.json())
+        .then(data => {
+          timeSlotsDiv.innerHTML = '';
+          data.time_slots.forEach(slot => {
+            const slotDiv = document.createElement('div');
+            slotDiv.className = `slot ${slot.status} p-4 rounded-lg shadow-md text-center cursor-pointer`;
+            slotDiv.innerText = `${slot.start_time} - ${slot.end_time}`;
+            slotDiv.addEventListener('click', () => selectSlot(slot));
+            timeSlotsDiv.appendChild(slotDiv);
+          });
+        });
     }
 
-    $('#reservationDate').change(function() {
-      var date = $(this).val();
-      if (date) {
-        $.ajax({
-          url: "{% url 'get_time_slots' space.id %}",
-          data: { date: date },
-          success: function(data) {
-            var timeSlotsDiv = $('#timeSlots');
-            timeSlotsDiv.empty();
-            resetSelection();
-
-            for (var time in data) {
-              var status = data[time];
-              var buttonClass = status === 'available' ? 'bg-green-500 hover:bg-green-700' : 'bg-red-500 cursor-not-allowed';
-              var disabled = status === 'unavailable' ? 'disabled' : '';
-              var button = `<button type="button" class="time-slot ${buttonClass} text-white py-2 px-4 rounded mb-2 mr-2" data-time="${time}" ${disabled}>${time}</button>`;
-              timeSlotsDiv.append(button);
-            }
-
-            $('.time-slot').click(function() {
-              if (!$(this).hasClass('bg-red-500')) {
-                var selectedTime = $(this).data('time');
-                if (!startTime || endTime) {
-                  startTime = selectedTime;
-                  endTime = null;
-                  $('.time-slot').removeClass('bg-blue-500').not('.bg-red-500').addClass('bg-green-500');
-                  $(this).removeClass('bg-green-500').addClass('bg-blue-500');
-                  $('#id_start_time').val(`${date}T${startTime}`);
-                  $('#id_end_time').val('');
-                  $('#displayStartTime').text(startTime);
-                  $('#displayEndTime').text('Not selected');
-                } else {
-                  let startHour = parseInt(startTime.split(':')[0]);
-                  let selectedHour = parseInt(selectedTime.split(':')[0]);
-
-                  if (selectedHour <= startHour) {
-                    $('#availabilityMessage').text('End time must be after start time.');
-                    return;
-                  }
-
-                  let isAvailable = true;
-                  for (let hour = startHour + 1; hour <= selectedHour; hour++) {
-                    if ($(`[data-time="${hour}:00"]`).hasClass('bg-red-500')) {
-                      isAvailable = false;
-                      break;
-                    }
-                  }
-
-                  if (isAvailable) {
-                    for (let hour = startHour + 1; hour <= selectedHour; hour++) {
-                      $(`[data-time="${hour}:00"]`).removeClass('bg-green-500').addClass('bg-blue-500');
-                    }
-                    endTime = selectedTime;
-                    $('#id_end_time').val(`${date}T${endTime}`);
-                    $('#displayEndTime').text(endTime);
-                    $('#availabilityMessage').text('');
-                    $('#submitBtn').prop('disabled', false);
-                  } else {
-                    $('#availabilityMessage').text('Selected range is not available.');
-                  }
-                }
-              }
-            });
-          },
-          error: function() {
-            $('#timeSlots').empty();
-            $('#availabilityMessage').text('Error fetching time slots.');
-          }
-        });
+    // Function to select a time slot
+    function selectSlot(slot) {
+      const previouslySelected = document.querySelector('.slot.selected');
+      if (previouslySelected) {
+        previouslySelected.classList.remove('selected');
       }
-    });
+      const selectedSlot = Array.from(document.getElementsByClassName('slot')).find(
+        slotDiv => slotDiv.innerText === `${slot.start_time} - ${slot.end_time}`
+      );
+      selectedSlot.classList.add('selected');
+      const selectedDate = document.getElementById('date').value;
+      startTimeInput.value = `${selectedDate}T${slot.start_time}`;
+      endTimeInput.value = `${selectedDate}T${slot.end_time}`;
+      reserveBtn.disabled = false;
+    }
 
-    $('#resetBtn').click(function() {
-      resetSelection();
+    // Listen to date changes
+    const dateInput = document.getElementById('date');
+    dateInput.addEventListener('change', function() {
+      const selectedDate = this.value;
+      loadTimeSlots(selectedDate);
     });
   });
 </script>
+
+<style>
+  .slot { padding: 10px; margin: 5px; border-radius: 5px; text-align: center; cursor: pointer; transition: background-color 0.3s; }
+  .available { background-color: #28a745; color: white; }
+  .unavailable { background-color: #dc3545; color: white; }
+  .pending { background-color: #ffc107; color: black; }
+  .selected { background-color: #007bff; color: white; border: 2px solid blue; }
+  .selected.available { background-color: #0069d9; }
+  .selected.unavailable { background-color: #c82333; }
+  .selected.pending { background-color: #e0a800; }
+</style>
 {% endblock %}
